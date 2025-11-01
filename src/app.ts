@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import accountRoutes from './modules/account/account.routes';
 
 export function createApp(): Express {
   const app = express();
@@ -6,8 +7,8 @@ export function createApp(): Express {
   // Middleware to parse JSON request bodies
   app.use(express.json());
 
-  // Routes will be added here in future phases
-  // Example: app.use('/accounts', accountRoutes);
+  // Register account routes
+  app.use(accountRoutes);
 
   return app;
 }
