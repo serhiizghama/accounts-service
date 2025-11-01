@@ -1,0 +1,26 @@
+# Dist
+dist
+# Logs
+logs
+*.log
+# Tmp files
+tmp
+# Dependency directory
+node_modules
+# ESlint
+#*.eslintrc.*
+# WebStorm
+*.idea/
+# Visual Code
+.vscode
+# Tmp
+tmp/
+dist
+.env
+files/
+data/
+docs/
+.DS_Store
+coverage
+reports
+.fork
