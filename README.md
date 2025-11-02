@@ -15,24 +15,32 @@ A RESTful API service built with Express.js and TypeScript for managing accounts
 ### Prerequisites
 
 - Docker and Docker Compose
-- MongoDB Shell (`mongosh`) - required for seeding data
 
-### Running with Docker
+### Quick Start
 
-The easiest way to run the service is using Docker Compose, which sets up both the MongoDB database and the application:
+Run the application with a single command (all settings are pre-configured with default values):
 
 ```bash
 docker-compose up -d
 ```
 
-This will:
-- Start MongoDB on port `27018`
-- Build and start the application on port `3001` (configurable via `PORT` environment variable)
-- Set up persistent data volumes for MongoDB
+This will start:
+- MongoDB on port `27018`
+- API service on port `3001`
 
-### Environment Variables
+Wait for the services to fully start (a few seconds), then verify everything is working:
 
-Create a `.env` file in the root directory with the following variables:
+```bash
+# Check service status
+docker-compose ps
+
+# Test API endpoint
+curl http://localhost:3001/accounts/stats
+```
+
+### Optional: Environment Variables Configuration
+
+If you want to change the default settings, create a `.env` file in the root directory:
 
 ```env
 MONGO_USER=admin
@@ -41,11 +49,17 @@ MONGO_DB=accounts-service
 PORT=3001
 ```
 
-Default values will be used if not specified.
+**Note**: If the `.env` file is not created, default values will be used (admin/admin123/accounts-service/3001).
 
-### Seeding Fake Data
+### Seeding Test Data
 
-To populate the database with sample accounts data, use the seed script:
+To populate the database with sample accounts data, run the seed script inside the Docker container:
+
+```bash
+docker-compose exec app npm run seed
+```
+
+Or if you're using local MongoDB with `mongosh` installed:
 
 ```bash
 npm run seed
@@ -55,8 +69,6 @@ This script will:
 - Connect to your MongoDB instance
 - Clear existing accounts
 - Insert mock data with different scopes (accounts, prospects, children)
-
-**Note**: Make sure MongoDB is running before executing the seed script.
 
 ## API Endpoints
 
@@ -264,18 +276,29 @@ Accounts have the following structure:
 - `updatedAt` cannot be set on create
 - `scope` must be one of the allowed enum values
 
-## Development
-
-### Local Development
+## Development (Optional)
 
 For local development without Docker:
 
+### Prerequisites
+
+- Node.js 22+
+- MongoDB (running locally or remotely)
+
+### Installation
+
 ```bash
 npm install
+```
+
+### Running
+
+```bash
+# Make sure MongoDB is running and accessible
 npm run dev
 ```
 
-This will start the development server with hot reload.
+**Note**: For local development, you need to configure `MONGO_URI` in your `.env` file.
 
 ### Building
 
