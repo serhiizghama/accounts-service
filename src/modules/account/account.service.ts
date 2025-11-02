@@ -1,6 +1,6 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { getDb } from '../../server';
-import { AccountPayload } from './account.schema';
+import { Account, AccountPayload } from './account.schema';
 
 const COLLECTION_NAME = 'accounts';
 
@@ -23,7 +23,8 @@ export async function createAccount(payload: AccountPayload) {
     };
 }
 
-export async function updateAccount(id: string, payload: Partial<AccountPayload>) {
+export async function updateAccount(id: string, payload: Partial<AccountPayload>)
+    : Promise<WithId<Account> | null> {
     const db = getDb();
     const collection = db.collection(COLLECTION_NAME);
 
@@ -36,10 +37,13 @@ export async function updateAccount(id: string, payload: Partial<AccountPayload>
     const result = await collection.findOneAndUpdate(
         { _id: new ObjectId(id) },
         { $set: updateData },
-        { returnDocument: 'after' }
+        {
+            returnDocument: 'after',
+            includeResultMetadata: false
+        }
     );
 
-    return result?.value ?? null;
+    return result as WithId<Account> | null;
 }
 
 export async function getAccountStats() {

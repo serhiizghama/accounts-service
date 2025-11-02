@@ -38,6 +38,34 @@ services:
     networks:
       - accounts-network
 
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: accounts-service-dev
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3001}:3001"
+      - "9229:9229"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      MONGO_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongodb:27017/${MONGO_DB:-accounts-service}?authSource=admin
+    command: npm run debug
+    volumes:
+      - ./src:/app/src
+      - ./dist:/app/dist
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./nodemon.json:/app/nodemon.json
+      - /app/node_modules
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - accounts-network
+
 volumes:
   mongodb_data:
     driver: local

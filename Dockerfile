@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -9,11 +9,17 @@ RUN npm ci
 
 COPY src ./src
 
-RUN npm run build
+FROM node:22-alpine AS production
 
-RUN rm -rf node_modules && \
-    npm ci --only=production && \
+WORKDIR /app
+
+COPY package*.json ./
+COPY tsconfig.json ./
+
+RUN npm ci --only=production && \
     npm cache clean --force
+
+COPY --from=builder /app/dist ./dist
 
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
